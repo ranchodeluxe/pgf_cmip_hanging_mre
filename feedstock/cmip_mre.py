@@ -178,3 +178,20 @@ test_full_dynamic_chunks = (
     | ConsolidateDimensionCoordinates()
     | ConsolidateMetadata()
 )
+
+# same example with fewer urls
+pattern = pattern_from_file_sequence(urls[0:4], concat_dim='time')
+test_short_dynamic_chunks = (
+    f'Creating {iid}' >> beam.Create(pattern.items())
+    | OpenURLWithFSSpec()
+    # do not specify file type to accomodate both ncdf3 and ncdf4
+    | OpenWithXarray(xarray_open_kwargs={'use_cftime': True})
+    | Preprocessor()
+    | StoreToZarr(
+        store_name=f'{iid}.zarr',
+        combine_dims=pattern.combine_dim_keys,
+        dynamic_chunking_fn=dynamic_chunking_func,
+    )
+    | ConsolidateDimensionCoordinates()
+    | ConsolidateMetadata()
+)
