@@ -234,7 +234,7 @@ test_short_time_only_chunks = (
 
 # few url example with only lon chunking (inducing a full rechunk)
 pattern = pattern_from_file_sequence(urls_short, concat_dim='time')
-test_short_time_only_chunks = (
+test_short_lon_only_chunks = (
     f'Creating {iid}' >> beam.Create(pattern.items())
     | OpenURLWithFSSpec()
     # do not specify file type to accomodate both ncdf3 and ncdf4
