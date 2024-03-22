@@ -28,7 +28,6 @@ jobs:
           pangeo_forge_runner_config: >
             {
             "Bake": {
-                "prune": ${{ env.prune }},
                 "bakery_class": "pangeo_forge_runner.bakery.dataflow.DataflowBakery"
             },
             "DataflowBakery": {
