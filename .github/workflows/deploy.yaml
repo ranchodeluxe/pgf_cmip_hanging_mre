@@ -1,11 +1,9 @@
 name: Deploy recipes
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
     branches: ["main"]
-    types: [opened, reopened, synchronize, labeled]
+    types: [labeled]
 
 jobs:
   deploy-recipes:
