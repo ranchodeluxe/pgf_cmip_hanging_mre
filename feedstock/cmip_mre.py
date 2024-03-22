@@ -163,6 +163,8 @@ urls = [
     'https://esgf-data1.llnl.gov/thredds/fileServer/css03_data/CMIP6/CMIP/CMCC/CMCC-ESM2/historical/r1i1p1f1/3hr/pr/gn/v20210114/pr_3hr_CMCC-ESM2_historical_r1i1p1f1_gn_201001010130-201412312230.nc',
 ]
 
+urls_short = urls[0:4]
+
 pattern = pattern_from_file_sequence(urls, concat_dim='time')
 test_full_dynamic_chunks = (
     f'Creating {iid}' >> beam.Create(pattern.items())
@@ -174,6 +176,57 @@ test_full_dynamic_chunks = (
         store_name=f'{iid}.zarr',
         combine_dims=pattern.combine_dim_keys,
         dynamic_chunking_fn=dynamic_chunking_func,
+    )
+    | ConsolidateDimensionCoordinates()
+    | ConsolidateMetadata()
+)
+
+# same example with fewer urls
+pattern = pattern_from_file_sequence(urls_short, concat_dim='time')
+test_short_dynamic_chunks = (
+    f'Creating {iid}' >> beam.Create(pattern.items())
+    | OpenURLWithFSSpec()
+    # do not specify file type to accomodate both ncdf3 and ncdf4
+    | OpenWithXarray(xarray_open_kwargs={'use_cftime': True})
+    | Preprocessor()
+    | StoreToZarr(
+        store_name=f'{iid}.zarr',
+        combine_dims=pattern.combine_dim_keys,
+        dynamic_chunking_fn=dynamic_chunking_func,
+    )
+    | ConsolidateDimensionCoordinates()
+    | ConsolidateMetadata()
+)
+
+# full example with only time chunking
+pattern = pattern_from_file_sequence(urls, concat_dim='time')
+test_full_time_only_chunks = (
+    f'Creating {iid}' >> beam.Create(pattern.items())
+    | OpenURLWithFSSpec()
+    # do not specify file type to accomodate both ncdf3 and ncdf4
+    | OpenWithXarray(xarray_open_kwargs={'use_cftime': True})
+    | Preprocessor()
+    | StoreToZarr(
+        store_name=f'{iid}.zarr',
+        combine_dims=pattern.combine_dim_keys,
+        target_chunks={'time': 300},
+    )
+    | ConsolidateDimensionCoordinates()
+    | ConsolidateMetadata()
+)
+
+# few url example with only time chunking
+pattern = pattern_from_file_sequence(urls_short, concat_dim='time')
+test_short_time_only_chunks = (
+    f'Creating {iid}' >> beam.Create(pattern.items())
+    | OpenURLWithFSSpec()
+    # do not specify file type to accomodate both ncdf3 and ncdf4
+    | OpenWithXarray(xarray_open_kwargs={'use_cftime': True})
+    | Preprocessor()
+    | StoreToZarr(
+        store_name=f'{iid}.zarr',
+        combine_dims=pattern.combine_dim_keys,
+        target_chunks={'time': 300},
     )
     | ConsolidateDimensionCoordinates()
     | ConsolidateMetadata()
