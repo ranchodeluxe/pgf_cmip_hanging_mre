@@ -36,7 +36,7 @@ jobs:
             },
             "TargetStorage": {
                 "fsspec_class": "gcsfs.GCSFileSystem",
-                "root_path": "gs://leap-persistent-ro/data-library/{job_name}"
+                "root_path": "gs://leap-scratch/data-library/{job_name}"
             },
             "InputCacheStorage": {
                 "fsspec_class": "gcsfs.GCSFileSystem",
