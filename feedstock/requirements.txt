@@ -2,4 +2,4 @@ pangeo-forge-esgf==0.1.1
 pangeo-forge-recipes==0.10.6
 dynamic-chunks==0.0.2
 s3fs
-apache-beam[gcp]
+apache-beam==2.52.0
