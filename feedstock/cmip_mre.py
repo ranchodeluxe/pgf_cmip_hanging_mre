@@ -243,7 +243,7 @@ test_full_lon_only_chunks = (
     | StoreToZarr(
         store_name=f'{iid}.zarr',
         combine_dims=pattern.combine_dim_keys,
-        target_chunks={'lon': 10},
+        target_chunks={'lon': 1},
     )
     | ConsolidateDimensionCoordinates()
     | ConsolidateMetadata()
